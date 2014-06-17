@@ -6,21 +6,23 @@ There are three columns in the data file :steps, date and interval.
 
 ## Setting the global echo option to TRUE
 ======================================
-``` {r setoptions,echo=TRUE}
+
+```r
     opts_chunk$set(echo= TRUE, results ="asis")
 ```
 
 ## Loading the data
 =================
 
-```{r}
+
+```r
 RawData<-read.csv("activity.csv")
 ```
 
 ## Processing the data
 ===================
-```{r}
 
+```r
 PData<-RawData
 #Determining the total number of rows in original data set
 NROW<-nrow(PData)
@@ -38,9 +40,6 @@ PData$steps<-as.numeric(PData$steps)
 PData$interval<-as.numeric(PData$interval)
 # Removing the NAs
 PMData<-na.omit(PData)
-
-
-
 ```
 
 ## Plots corresponding to the loaded data
@@ -52,22 +51,35 @@ Histogram is plotted by omitting the missing values
 Mean and Median is calculated by omitting the missing values
 
 
-```{r}
+
+```r
   #Plotting the histogram of the total number of steps taken each day
   TotalHist<-tapply(PMData$steps,PMData$date,sum)
   hist(TotalHist,main="Histogram with NAs excluded",xlab='Total number of steps in a day')
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
+```r
   #Mean of the steps excluding the NAs
   MeanStepsWONA <-mean(na.omit(PData$steps))
   MeanStepsWONA  
+```
+
+[1] 37.38
+
+```r
   #Median of the steps excluding the NAs
   MedianStepsWONA<-median(na.omit(PData$steps))
   MedianStepsWONA
-
 ```
+
+[1] 0
 
 ### 2.Average daily activity pattern
 =============================================
-```{r}
+
+```r
   UIDs<-unique(PData$interval)
   LengthUIDS<-length(UIDs)
   AvgDate<-tapply(PMData$steps,PMData$interval,mean)
@@ -75,27 +87,37 @@ Mean and Median is calculated by omitting the missing values
   RefMatrix$AvgDate<-as.numeric(RefMatrix$AvgDate)
   plot(UIDs,AvgDate,type="l",main="Average daily activity pattern",xlab="Interval Number",
        ylab="Number of steps")
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+
+```r
   #The five minute interval having the maximum value for the average number of steps
   MaxAvgIndex<-which.max(as.numeric(AvgDate))
   MaxAvgInterval<-UIDs[MaxAvgIndex]
   #5 minute interval having the max average number of steps
   MaxAvgInterval
-  
 ```
+
+[1] 835
   
 
 ### 3.Inputting missing values
 =============================================
 a.Total number of missing values in the dataset  
-```{r}
+
+```r
 NumberNA<-sum(is.na(PData))
 #Number of missing values
 NumberNA   
-```  
+```
+
+[1] 2304
 
 b.Filling in the missing values and creating a new Data Set  s
   
-```{r}
+
+```r
 #Missing value is replaced by the average of the corresponding 5 minute interval
 PM2Data<-PData
 for (i in 1:NROW){
@@ -104,19 +126,31 @@ for (i in 1:NROW){
             PM2Data$steps[i]<-AvgDate[match(PM2Data$interval[i],UIDs)]
     }
 }
-
 ```
 c.Histogram, mean and median of new data set  
-```{r}
+
+```r
   NewTotalHist<-tapply(PM2Data$steps,PM2Data$date,sum)
   hist(NewTotalHist,main="Histogram with replacements for NAs ",xlab='Total number of steps in a day')
+```
+
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+
+```r
   #Mean of the steps excluding the NAs
   NewMeanSteps<-mean(PM2Data$steps)
   NewMeanSteps  
+```
+
+[1] 37.38
+
+```r
   #Median of the steps excluding the NAs
   NewMedianSteps<-median(PM2Data$steps)
   NewMedianSteps
 ```
+
+[1] 0
 
 ### 4.Difference in activity patterns on wwekdays and weekends
 ===========================================================
