@@ -121,5 +121,34 @@ c.Histogram, mean and median of new data set
 ### 4.Difference in activity patterns on wwekdays and weekends
 ===========================================================
 
+```{r}
+#Coding an extra column indicating a weekday or weekend
+  PM2Data<-within(PM2Data,{
+    daycat<-NA
+    daycat[PM2Data$Day=="Monday"]<-"Weekday"
+    daycat[PM2Data$Day=="Tuesday"]<-"Weekday"
+    daycat[PM2Data$Day=="Wednesday"]<-"Weekday"
+    daycat[PM2Data$Day=="Thursday"]<-"Weekday"
+    daycat[PM2Data$Day=="Friday"]<-"Weekday"
+    daycat[PM2Data$Day=="Saturday"]<-"Weekend"
+    daycat[PM2Data$Day=="Sunday"]<-"Weekend"
+  }
+    )
+#Subsetting based on weekday or weekend
+DataWeekday<-subset(PM2Data,PM2Data$daycat=="Weekday")
+DataWeekend<-subset(PM2Data,PM2Data$daycat=="Weekend")
+#Finding the average for each time interval.ie., averaged across the days
+AvgWeekday<-tapply(DataWeekday$steps,DataWeekday$interval,mean)
+AvgWeekend<-tapply(DataWeekend$steps,DataWeekend$interval,mean)
+AvgWeekdayDF<-data.frame(UIDs,AvgWeekday)
+AvgWeekendDF<-data.frame(UIDs,AvgWeekend)
+#Plotting of the data based on weekday or weekend
+par(mfrow = c(2,1))
+par(mar=c(4,4,1,1))
+plot(AvgWeekdayDF$UIDs,AvgWeekdayDF$AvgWeekday,type="l",
+     main="Weekday",xlab="",ylab="Number of Steps")
+plot(AvgWeekendDF$UIDs,AvgWeekendDF$AvgWeekend,type="l",
+     main="Weekend",xlab="",ylab="Number of Steps")
 
+```
 
